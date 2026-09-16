@@ -8,6 +8,12 @@ services:
     volumes:
       - mongodb_data:/data/db
     restart: unless-stopped
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+      - /data/configdb
 
 volumes:
   mongodb_data:

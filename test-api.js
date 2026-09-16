@@ -1,40 +1,31 @@
-const http = require('http');
+const request = async (path, method, data = null, token = null) => {
+  const options = {
+    method: method,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
 
-const request = (path, method, data = null, token = null) => {
-  return new Promise((resolve, reject) => {
-    const options = {
-      hostname: 'localhost',
-      port: 3000,
-      path: path,
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    };
+  if (token) {
+    options.headers['Authorization'] = `Bearer ${token}`;
+  }
 
-    if (token) {
-      options.headers['Authorization'] = `Bearer ${token}`;
-    }
+  if (data) {
+    options.body = JSON.stringify(data);
+  }
 
-    const req = http.request(options, (res) => {
-      let body = '';
-      res.on('data', (chunk) => (body += chunk));
-      res.on('end', () => {
-        try {
-          resolve({ status: res.statusCode, data: JSON.parse(body) });
-        } catch (e) {
-          resolve({ status: res.statusCode, data: body });
-        }
-      });
-    });
+  const url = `http://localhost:3000${path}`;
+  const response = await fetch(url, options);
+  
+  let responseData;
+  const contentType = response.headers.get("content-type");
+  if (contentType && contentType.indexOf("application/json") !== -1) {
+    responseData = await response.json();
+  } else {
+    responseData = await response.text();
+  }
 
-    req.on('error', (e) => reject(e));
-
-    if (data) {
-      req.write(JSON.stringify(data));
-    }
-    req.end();
-  });
+  return { status: response.status, data: responseData };
 };
 
 const runTests = async () => {
