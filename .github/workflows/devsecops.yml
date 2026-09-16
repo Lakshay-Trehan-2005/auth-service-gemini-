@@ -1,0 +1,19 @@
+# .github/workflows/devsecops.yml
+name: DevGuard DevSecOps
+
+on:
+  push:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  call-devsecops:
+    uses: l3montree-dev/devguard-ci-components/.github/workflows/full.yml@main
+    with:
+      devguard-asset-name: "lakshay-bachelors-thesis/projects/gemini-v2-thesis/assets/gemini-v2-thesis"
+      devguard-api-url: "https://api.devguard.org"
+      devguard-web-ui: "https://app.devguard.org"
+    secrets:
+      devguard-token: "${{ secrets.DEVGUARD_TOKEN }}" # you need to create this secret in your GitHub repository settings
