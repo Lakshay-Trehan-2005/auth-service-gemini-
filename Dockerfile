@@ -26,4 +26,6 @@ USER node
 
 # Expose port and start the application
 EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "process.exit(0)"
 CMD ["npm", "start"]
